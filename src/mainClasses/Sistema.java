@@ -2,7 +2,6 @@ package mainClasses;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class Sistema {
 
@@ -16,218 +15,229 @@ public class Sistema {
 		this.gerenciaUsuarios = new GerenciaUsuarios();
 	}
 
-	public void criarUsuario(String login, String senha, String nome,String email) throws Exception {
+	public void criarUsuario(String login, String senha, String nome,
+			String email) throws Exception {
 		this.gerenciaUsuarios.criarUsuario(login, senha, nome, email);
 	}
 
-
 	public String abrirSessao(String login, String senha) throws Exception {
-		if(!elementIsValid(login)){
+		if (!elementIsValid(login)) {
 			throw new Exception("Login inválido");
-		}else if(this.gerenciaUsuarios.loginJaExiste(login)){
-			if(!this.gerenciaUsuarios.verificaSenha(login, senha)){
+		} else if (this.gerenciaUsuarios.loginJaExiste(login)) {
+			if (!this.gerenciaUsuarios.verificaSenha(login, senha)) {
 				throw new Exception("Login inválido");
 			}
-			return this.gerenciaSessao.abrirSessao(login,senha);
-		}else{
+			return this.gerenciaSessao.abrirSessao(login, senha);
+		} else {
 			throw new Exception("Usuário inexistente");
 		}
 	}
-	
+
 	public String getPerfilMusical(String sessao) {
 		String loginDaSessao = this.gerenciaSessao.getLogin(sessao);
 		Usuario user = this.gerenciaUsuarios.getUser(loginDaSessao);
-		return retornaListComChaves(this.gerenciaSons.getPerfilMusical(user));
+		return retornaComChaves(this.gerenciaSons.getPerfilMusical(user),"stack");
+
 	}
-	
-	public boolean dataIsValida(String dataParam){
+
+	public boolean dataIsValida(String dataParam) {
 		try {
 			String[] datas = dataParam.split("/");
 			Integer dia = Integer.parseInt(datas[0]);
 			Integer mes = Integer.parseInt(datas[1]);
 			Integer ano = Integer.parseInt(datas[2]);
-			if(dia < 1 || dia > 31){return false;}
-			else if(ano<2013){return false;}
-			else if(mes < 1 || mes > 12){return false;}
-			else{
-				if(mes == 2){
-					if(dia > 29){return false;}
-					// se o ano for bisexto e dia for igual a 29, entao false.
-					else if(!((ano % 4 == 0) && ( (ano % 100 != 0) || (ano % 400 == 0))) && dia==29){
+			if (dia < 1 || dia > 31) {
+				return false;
+			} else if (ano < 2013) {
+				return false;
+			} else if (mes < 1 || mes > 12) {
+				return false;
+			} else {
+				if (mes == 2) {
+					if (dia > 29) {
 						return false;
 					}
-				}else{
-				List<Integer> meses30dias = new ArrayList<Integer>();
-				meses30dias.add(4);meses30dias.add(6);meses30dias.add(9);meses30dias.add(11);
-				if(meses30dias.contains(mes) && dia >=31){return false;}
+					// se o ano for bisexto e dia for igual a 29, entao false.
+					else if (!((ano % 4 == 0) && ((ano % 100 != 0) || (ano % 400 == 0)))
+							&& dia == 29) {
+						return false;
+					}
+				} else {
+					List<Integer> meses30dias = new ArrayList<Integer>();
+					meses30dias.add(4);
+					meses30dias.add(6);
+					meses30dias.add(9);
+					meses30dias.add(11);
+					if (meses30dias.contains(mes) && dia >= 31) {
+						return false;
+					}
 				}
 			}
 		} catch (Exception e) {
 			return false;
-		}return true;
+		}
+		return true;
 	}
-	
-	public String postarSom(String sessao,String link,String dataCriacao) throws Exception{
-		if(!elementIsValid(link)){
+
+	public String postarSom(String sessao, String link, String dataCriacao)
+			throws Exception {
+		if (!elementIsValid(link)) {
 			throw new Exception("Som inválido");
-		} else if(!dataIsValida(dataCriacao)){
+		} else if (!dataIsValida(dataCriacao)) {
 			throw new Exception("Data de Criação inválida");
 		}
 		String login = this.gerenciaSessao.getLogin(sessao);
 		Usuario user = this.gerenciaUsuarios.getUser(login);
-		 return this.gerenciaSons.postarSom(user,link,dataCriacao);
+		return this.gerenciaSons.postarSom(user, link, dataCriacao);
 	}
-	
-	public String getAtributoUsuario(String login, String atributo) throws Exception{
+
+	public String getAtributoUsuario(String login, String atributo)
+			throws Exception {
 		if (!elementIsValid(atributo)) {
 			throw new Exception("Atributo inválido");
-		}
-		else if(!elementIsValid(login)){
+		} else if (!elementIsValid(login)) {
 			throw new Exception("Login inválido");
-		}
-		else if (!this.gerenciaUsuarios.loginJaExiste(login)) {
+		} else if (!this.gerenciaUsuarios.loginJaExiste(login)) {
 			throw new Exception("Usuário inexistente");
-		}
-		else {	
-			String result = this.gerenciaUsuarios.getAtributoUsuario(login,atributo);
-			if(!result.isEmpty()){ return result;}
+		} else {
+			String result = this.gerenciaUsuarios.getAtributoUsuario(login,
+					atributo);
+			if (!result.isEmpty()) {
+				return result;
+			}
 		}
 		throw new Exception("Atributo inexistente");
 	}
 
-	public String getAtributoSom(String idSom, String atributo) throws Exception{
-		if(idSom == null){
-			throw new Exception("Som inexistente");
-		} else if(idSom.isEmpty()){
-			throw new Exception("Som inválido");
-		} else if(!elementIsValid(atributo)){
-			throw new Exception("Atributo inválido");
-		}
-		String result = this.gerenciaSons.getAtributoSom(idSom,atributo);
-		if(!result.isEmpty()){
+	public String getAtributoSom(String idSom, String atributo) throws Exception {
+		 if (!elementIsValid(idSom)) {
+				throw new Exception("Som inválido");
+			}
+		 else if (!elementIsValid(atributo)) {
+				throw new Exception("Atributo inválido");
+			}
+		String result = this.gerenciaSons.getAtributoSom(idSom, atributo);
+		if (!result.isEmpty()) {
 			return result;
-		}else{
-			throw new Exception("Atributo inexistente");
-		}
+		} throw new Exception("Atributo inexistente");
 	}
-	
-	public void seguirUsuario (String idsessao,String login) throws Exception{
+
+	public void seguirUsuario(String idsessao, String login) throws Exception {
 		verificaSessao(idsessao);
-		if(!elementIsValid(idsessao)){
+		if (!elementIsValid(idsessao)) {
 			throw new Exception("Sessão inválida");
-		}else if(!elementIsValid(login) || this.gerenciaSessao.getLogin(idsessao).equals(login)){
+		} else if (!elementIsValid(login)
+				|| this.gerenciaSessao.getLogin(idsessao).equals(login)) {
 			throw new Exception("Login inválido");
 		}
-		
+
 		// Identificando Usuario que sera seguido:
-		if(this.gerenciaUsuarios.loginJaExiste(login)){
+		if (this.gerenciaUsuarios.loginJaExiste(login)) {
 			Usuario userSeguido = this.gerenciaUsuarios.getUser(login);
 			// Identificando Usuario que decidiu ser seguidor:
 			String loginSeguidor = this.gerenciaSessao.getLogin(idsessao);
 			Usuario userSeguidor = this.gerenciaUsuarios.getUser(loginSeguidor);
-			// Passando para a classe que gerencia o sons a responsabilidade de adcionar nas fontes de som, e na lista de seguidores.
+			// Passando para a classe que gerencia o sons a responsabilidade de
+			// adcionar nas fontes de som, e na lista de seguidores.
 			this.gerenciaSons.seguirUsuario(userSeguidor, userSeguido);
-		}else{
+		} else {
 			throw new Exception("Login inexistente");
 		}
 	}
-	
-	public String getListaDeSeguidores(String idsessao) throws Exception{
+
+	public String getListaDeSeguidores(String idsessao) throws Exception {
 		verificaSessao(idsessao);
 		// Identificando Usuario:
 		String loginUser = this.gerenciaSessao.getLogin(idsessao);
 		Usuario user = this.gerenciaUsuarios.getUser(loginUser);
-		return retornaListComChaves(user.getListaDeSeguidores());
+		return retornaComChaves(user.getListaDeSeguidores(),"list");
 	}
-	
-	public int getNumeroDeSeguidores (String idsessao) throws Exception{
+
+	public int getNumeroDeSeguidores(String idsessao) throws Exception {
 		verificaSessao(idsessao);
 		String loginUser = this.gerenciaSessao.getLogin(idsessao);
 		Usuario user = this.gerenciaUsuarios.getUser(loginUser);
 		return user.getNumeroDeSeguidores();
 	}
-	
-	public String getFontesDeSons(String idsessao) throws Exception{
+
+	public String getFontesDeSons(String idsessao) throws Exception {
 		verificaSessao(idsessao);
 		String loginUser = this.gerenciaSessao.getLogin(idsessao);
 		Usuario user = this.gerenciaUsuarios.getUser(loginUser);
-		return retornaListComChaves(user.getFontesDeSom());
+		return retornaComChaves(user.getFontesDeSom(),"list");
 	}
-	
-	
-	/** Metodo que retorna o id de uma determinado usuario a partir do identificador de uma sessao.
+
+	/**
+	 * Metodo que retorna o id de uma determinado usuario a partir do
+	 * identificador de uma sessao.
 	 * 
 	 * @param sessao
 	 * @return
 	 */
-	public String getIDUsuario(String sessao){
-		return this.gerenciaUsuarios.getAtributoUsuario(this.gerenciaSessao.getLogin(sessao),"id");
+	public String getIDUsuario(String sessao) {
+		return this.gerenciaUsuarios.getAtributoUsuario(
+				this.gerenciaSessao.getLogin(sessao), "id");
 	}
-	
-	public String getVisaoDosSons(String idsessao){
+
+	public String getVisaoDosSons(String idsessao) throws Exception{
+		verificaSessao(idsessao);
 		String loginUser = this.gerenciaSessao.getLogin(idsessao);
 		Usuario user = this.gerenciaUsuarios.getUser(loginUser);
-		return retornaStackComChaves(this.gerenciaSons.getVisaoDosSons(user));
+		return retornaComChaves(this.gerenciaSons.getVisaoDosSons(user),"stack");
 	}
-	
-	public void encerrarSessao(String login){
-		this.gerenciaSessao.encerrarSessao("sessao"+login);
+
+	public void encerrarSessao(String login) {
+		this.gerenciaSessao.encerrarSessao("sessao" + login);
 	}
 
 	/**
 	 * Metodo que ao ser chamado finaliza o sistema.
 	 */
-	public void encerrarSistema(){
-		
+	public void encerrarSistema() {
+
 	}
-	
-	public String retornaStackComChaves(Stack<String> list){
-		String retorno ="{";
-		try {
-			int sizeList = list.size();
-			for(int i=0;i<sizeList;i++){
-				retorno = retorno + list.pop();
-				
-				if(i < (sizeList-1)){
-					retorno = retorno + ",";
-				}
-			}
-		} catch (Exception e) {}
-		retorno = retorno +"}";
-		return retorno;
-	}
-	
-	public String retornaListComChaves(List<String> list){
-		String retorno ="{";
-		try {
-			int sizeList = list.size();
-			for(int i=0;i<sizeList;i++){
+
+	public String retornaComChaves(List<String> list, String formato) {
+		String retorno = "{";
+		int sizeList = list.size();
+		if (formato.equals("stack")) {
+			for (int i = sizeList - 1; i >= 0; i--) {
 				retorno = retorno + list.get(i);
-				if(i < (sizeList-1)){
+				if (i > 0) {
 					retorno = retorno + ",";
 				}
 			}
-		} catch (Exception e) {}
-		retorno = retorno +"}";
+		} else if (formato.equals("list")) {
+			for (int i = 0; i < sizeList; i++) {
+				retorno = retorno + list.get(i);
+				if (i < (sizeList - 1)) {
+					retorno = retorno + ",";
+				}
+			}
+		}
+
+		retorno = retorno + "}";
 		return retorno;
 	}
-	
-	public void verificaSessao(String idsessao) throws Exception{
-		if(!elementIsValid(idsessao)){
+
+	public void verificaSessao(String idsessao) throws Exception {
+		if (!elementIsValid(idsessao)) {
 			throw new Exception("Sessão inválida");
-		} else if(!this.gerenciaSessao.existeSessao(idsessao)){
+		} else if (!this.gerenciaSessao.existeSessao(idsessao)) {
 			throw new Exception("Sessão inexistente");
 		}
 	}
 
-	/** Metodo que auxilia na verificação de variaveis na forma de String.
+	/**
+	 * Metodo que auxilia na verificação de variaveis na forma de String.
 	 * 
-	 * @param  String element
+	 * @param String
+	 *            element
 	 * @return true se elemento nao for null ou vazio, false caso contrario.
 	 */
-	public static boolean elementIsValid(String element){
-		if(element == null || element.isEmpty()){ 
+	public static boolean elementIsValid(String element) {
+		if (element == null || element.isEmpty()) {
 			return false;
-		}return true;
+		} return true;
 	}
 }

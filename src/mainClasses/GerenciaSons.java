@@ -1,9 +1,7 @@
 package mainClasses;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 public class GerenciaSons {
@@ -26,7 +24,7 @@ public class GerenciaSons {
 		return id;
 	}
 
-	public Stack<String> getPerfilMusical(Usuario user) {
+	public List<String> getPerfilMusical(Usuario user) {
 		return user.getPerfilMusical();
 	}
 

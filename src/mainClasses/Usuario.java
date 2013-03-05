@@ -7,8 +7,8 @@ import java.util.Stack;
 public class Usuario {
 
 	private String id, login, senha, nome, email;
-	private List<String> fontesDeSom, listaSeguidores;
-	private Stack<String> visaoDosSons, perfilMusical;
+	private List<String> fontesDeSom, listaSeguidores,perfilMusical;
+	private Stack<String> visaoDosSons;
 	/**
 	 * Construtor da Classe Usuario.
 	 * 
@@ -30,7 +30,7 @@ public class Usuario {
 		this.fontesDeSom = new ArrayList<String>();
 		this.listaSeguidores = new ArrayList<String>();
 		this.visaoDosSons = new Stack<String>();
-		this.perfilMusical = new Stack<String>();
+		this.perfilMusical = new ArrayList<String>();
 	}
 
 	/**
@@ -224,7 +224,7 @@ public class Usuario {
 		this.perfilMusical.add(idSom);
 	}
 	
-	public Stack<String> getPerfilMusical(){
+	public List<String> getPerfilMusical(){
 		return this.perfilMusical;
 	}
 }
